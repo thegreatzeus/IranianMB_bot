@@ -30,17 +30,17 @@ if ($contact) {
         return;
     }
 
-    if (strlen($phone_number) !== 12 && strlen($phone_number) !== 11) {
+    if (str_starts_with($phone_number, "+")) {
+        $phone_number = substr($phone_number, 1); // Remove the + sign.
+    }
+
+    if (strlen($phone_number) !== 11 or !str_starts_with($phone_number, "1")) {
         sendMessage($from_id, "شماره تلفن یک شماره کانادایی نیست.", null, $confirm_phone_number_keyboard);
         return;
     }
 
-    if (!str_starts_with($phone_number, '+1') && !str_starts_with($phone_number, '1')) {
-        sendMessage($from_id, "شماره تلفن می بایست با +1 شروع شود.", null, $confirm_phone_number_keyboard);
-        return;
-    }
-
-    if (!in_array(substr($phone_number, 2, 3), $manitoba_area_codes) && !in_array(substr($phone_number, 1, 3), $manitoba_area_codes)) {
+    $area_code = substr($phone_number, 1, 3);
+    if (!in_array($area_code, $manitoba_area_codes)) {
         sendMessage($from_id, "کد منطقه می بایست یکی از کد های مانیتوبا باشد (204, 431, 584).", null, $confirm_phone_number_keyboard);
         return;
     }
